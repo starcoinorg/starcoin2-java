@@ -18,6 +18,7 @@ jobs:
           fetch-depth: 0
       - name: Install gpg secret key
         run: |
+          export GPG_TTY=$(tty)
           echo -n ${{ secrets.OSSRH_GPG_SECRET_KEY }}  | base64 --decode | gpg --import
       - name: Setup Java
         uses: actions/setup-java@v1
