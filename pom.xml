@@ -13,8 +13,8 @@
     <url>https://starcoin.org/</url>
 
     <scm>
-        <connection>https://github.com/starcoinorg/starcoin-java</connection>
-        <url>https://github.com/starcoinorg/starcoin-java</url>
+        <connection>https://github.com/starcoinorg/starcoin2-java</connection>
+        <url>https://github.com/starcoinorg/starcoin2-java</url>
     </scm>
 
     <properties>
@@ -166,6 +166,20 @@
                         <id>attach-javadocs</id>
                         <goals>
                             <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
                         </goals>
                     </execution>
                 </executions>
