@@ -8,7 +8,7 @@ on:
 jobs:
   deploy:
     name: Deploy Snapshot
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - name: Checkout
@@ -16,6 +16,7 @@ jobs:
         with:
           ref: 'main'
           fetch-depth: 0
+          
       - name: Install gpg secret key
         run: |
           mkdir -p ~/.gnupg/private-keys-v1.d
@@ -26,16 +27,11 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-          server-id: ossrh
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_CENTRAL_TOKEN
 
-      - name: Deploy to Maven Central
-        run: |
-          cat ~/.m2/settings.xml
-          echo $MAVEN_USERNAME
-          echo $MAVEN_CENTRAL_TOKEN
-          mvn clean deploy
-        env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_CENTRAL_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+      - name: Release Maven package
+        uses: samuelmeuli/action-maven-publish@v1
+        with:
+          gpg_private_key: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
+          gpg_passphrase: ${{ secrets.OSSRH_GPG_PASSPHRASE }}
+          nexus_username: ${{ secrets.OSSRH_USERNAME }}
+          nexus_password: ${{ secrets.OSSRH_TOKEN }}
