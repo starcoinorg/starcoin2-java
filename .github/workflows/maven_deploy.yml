@@ -16,7 +16,9 @@ jobs:
         with:
           ref: 'main'
           fetch-depth: 0
-
+      - name: Install gpg secret key
+        run: |
+          echo -n ${{ secrets.OSSRH_GPG_SECRET_KEY }}  | base64 --decode | gpg --import
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
@@ -26,7 +28,11 @@ jobs:
           server-password: MAVEN_CENTRAL_TOKEN
 
       - name: Deploy to Maven Central
-        run: mvn deploy
+        run: |
+          cat ~/.m2/settings.xml
+          echo $MAVEN_USERNAME
+          echo $MAVEN_CENTRAL_TOKEN
+          mvn clean deploy
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_CENTRAL_TOKEN: ${{ secrets.OSSRH_TOKEN }}
