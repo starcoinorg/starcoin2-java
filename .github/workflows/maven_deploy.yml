@@ -16,6 +16,13 @@ jobs:
         with:
           ref: 'main'
           fetch-depth: 0
+          
+      - name: Install gpg secret key
+        run: |
+          mkdir -p ~/.gnupg/private-keys-v1.d
+          chmod 700 ~/.gnupg/private-keys-v1.d
+          echo -n ${{ secrets.OSSRH_GPG_SECRET_KEY }}  | base64 --decode | gpg --import
+
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
