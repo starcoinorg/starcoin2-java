@@ -21,11 +21,24 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_CENTRAL_TOKEN
 
-      - name: Release Maven package
-        uses: samuelmeuli/action-maven-publish@v1
-        with:
-          gpg_private_key: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
-          gpg_passphrase: ${{ secrets.OSSRH_GPG_PASSPHRASE }}
-          nexus_username: ${{ secrets.OSSRH_USERNAME }}
-          nexus_password: ${{ secrets.OSSRH_TOKEN }}
+      - name: Install gpg secret key
+        run: |
+          cat <(echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}") | gpg --import
+          gpg --list-secret-keys --keyid-format LONG
+
+      - name: Publish to Maven Central repository
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+        run: |
+          cat ~/.m2/settings.xml
+          echo $MAVEN_USERNAME
+          echo $MAVEN_PASSWORD
+          mvn \
+          --no-transfer-progress \
+          -Dgpg.passphrase=${{ secrets.OSSRH_GPG_PASSPHRASE }} \
+          clean deploy
